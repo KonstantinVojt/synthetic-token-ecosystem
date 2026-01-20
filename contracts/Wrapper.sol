@@ -6,52 +6,33 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Wrapper is Ownable, ERC721{
-    
     error NotNFTowner();
     error InvalidRecipient();
 
     event Wrapped(address indexed payer, address indexed recipient, uint256 indexed tokenId, uint256 amount);
-
     event Unwrapped(address indexed owner, uint256 indexed tokenId, uint256 amount);
-
 
     IERC20 public immutable token;
 
     uint256 public immutable tokensPerNFT;
     uint256 private _tokenIdCounter;
 
-    constructor (address tokenAddress, uint256 _tokensPerNFT) ERC721("Wrapped Synthetic NFT", "wSYN") Ownable(msg.sender) {
-        
+    constructor(address tokenAddress, uint256 _tokensPerNFT) ERC721("Wrapped Synthetic NFT", "wSYN") Ownable(msg.sender) {
         token = IERC20(tokenAddress);
-
-        
         tokensPerNFT = _tokensPerNFT;
     }
 
-    function _wrap (address payer, address recipient) internal {
-        
-        token.transferFrom(payer, address(this), tokensPerNFT);
-
-        
-        _tokenIdCounter++;
-
-        
-        _safeMint(recipient, _tokenIdCounter);
-        emit Wrapped(payer, recipient, _tokenIdCounter, tokensPerNFT);
-    }
-
-    function wrapTo (address recipient) external {
-        if (recipient == address(0)) revert InvalidRecipient();
-        
-        _wrap(msg.sender, recipient);
-
-    }
-
-    function wrap () external {
+    function wrap() external {
         _wrap(msg.sender, msg.sender);
     }
 
-    function unwrap (uint256 tokenId) external {
+    function wrapTo(address recipient) external {
+        if (recipient == address(0)) revert InvalidRecipient();
+        
+        _wrap(msg.sender, recipient);
+    }
+
+    function unwrap(uint256 tokenId) external {
         if (ownerOf(tokenId) != msg.sender) revert NotNFTowner();
 
         _burn(tokenId);
@@ -62,4 +43,12 @@ contract Wrapper is Ownable, ERC721{
 
     }
 
+    function _wrap(address payer, address recipient) internal {
+        token.transferFrom(payer, address(this), tokensPerNFT);
+
+        _tokenIdCounter++;
+
+        _safeMint(recipient, _tokenIdCounter);
+        emit Wrapped(payer, recipient, _tokenIdCounter, tokensPerNFT);
+    }
 }

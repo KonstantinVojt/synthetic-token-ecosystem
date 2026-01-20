@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./SyntheticToken.sol";
-import "./ISyntheticTokenFactory.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+
+import {ISyntheticTokenFactory} from "./ISyntheticTokenFactory.sol";
+import {SyntheticToken} from "./SyntheticToken.sol";
 
 contract SyntheticTokenFactory is Ownable, ISyntheticTokenFactory {
 
-    SyntheticInfo[] public synthetics;
-    mapping(address => bool) public isSynthetic;
+    SyntheticInfo[] public syntheticTokens;
+    mapping(address => bool) public isSyntheticToken;
 
     constructor() Ownable(msg.sender) {}
 
-    function createSynthetic(string calldata name, string calldata symbol) external onlyOwner returns (address) {
+    function createSyntheticToken(string calldata name, string calldata symbol) external onlyOwner returns (address) {
         SyntheticToken token = new SyntheticToken(
             name,
             symbol,
@@ -21,7 +21,7 @@ contract SyntheticTokenFactory is Ownable, ISyntheticTokenFactory {
         );
         token.transferOwnership(msg.sender);
 
-        synthetics.push(
+        syntheticTokens.push(
             SyntheticInfo({
                 token: address(token),
                 name: name,
@@ -29,13 +29,14 @@ contract SyntheticTokenFactory is Ownable, ISyntheticTokenFactory {
             })
         );
 
-        isSynthetic[address(token)] = true;
+        isSyntheticToken[address(token)] = true;
 
-        emit SyntheticCreated(address(token), msg.sender, name, symbol);
+        emit SyntheticTokenCreated(address(token), msg.sender, name, symbol);
+
         return address(token);
     }
 
-    function syntheticsCount() external view returns (uint256) {
-        return synthetics.length;
+    function syntheticTokensCount() external view returns (uint256) {
+        return syntheticTokens.length;
     }
 }

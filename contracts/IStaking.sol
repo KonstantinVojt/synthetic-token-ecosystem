@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-interface IStaking {
-    
+interface IStaking { 
     struct Rewards {
-    uint256 lastClaimTimestamp;
-    uint256 claimable;
-    uint256 claimed;
+        uint256 lastClaimTimestamp;
+        uint256 claimable;
+        uint256 claimed;
     }
 
     error NoAmount();
@@ -15,5 +14,4 @@ interface IStaking {
     event Staked(address indexed user, uint256 amount);
     event UnStaked(address indexed user, uint256 amount);
     event RewardClaimed(address indexed user, uint256 amount);
-
 }

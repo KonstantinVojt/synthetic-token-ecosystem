@@ -1,21 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./IStaking.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+
+import  {IStaking} from "./IStaking.sol";
 
 contract Staking is Ownable, IStaking {
+    IERC20 public immutable token;
 
-    ERC20 public immutable token;
     uint256 public stakingRate = 10;
-    uint256 constant YEAR = 365 days;
+    uint256 constant ONE_YEAR = 365 days;
 
     mapping(address => uint256) public balances;
     mapping(address => Rewards) rewards;
 
     constructor (address tokenAddress) Ownable(msg.sender) {
-        token = ERC20(tokenAddress);
+        token = IERC20(tokenAddress);
     } 
 
     function stake(uint256 amount) external {
@@ -27,7 +28,6 @@ contract Staking is Ownable, IStaking {
         token.transferFrom(msg.sender, address(this), amount);
 
         emit Staked(msg.sender, amount);
-
     }
 
     function unStake(uint256 amount) external {
@@ -40,7 +40,6 @@ contract Staking is Ownable, IStaking {
         token.transfer(msg.sender, amount);
 
         emit UnStaked(msg.sender, amount);
-
     }
 
     function claim() external {
@@ -70,13 +69,11 @@ contract Staking is Ownable, IStaking {
         uint256 staked = balances[user];
 
         if (staked > 0 ) {
-            uint256 reward = (staked * stakingRate * timePassed) / (YEAR * 100);
+            uint256 reward = (staked * stakingRate * timePassed) / (ONE_YEAR * 100);
 
             userRewards.claimable += reward;
         }
 
         userRewards.lastClaimTimestamp = block.timestamp;
-
     }
-
 }

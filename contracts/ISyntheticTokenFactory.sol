@@ -2,7 +2,6 @@
 pragma solidity ^0.8.19;
 
 interface ISyntheticTokenFactory {
-
     struct SyntheticInfo {
         address token;
         string name;
@@ -11,6 +10,8 @@ interface ISyntheticTokenFactory {
 
     error UnknownSynthetic();
 
-    event SyntheticCreated(address indexed token, address indexed owner, string name, string symbol);
+    event SyntheticTokenCreated(address indexed token, address indexed owner, string name, string symbol);
 
+    function createSyntheticToken(string calldata name, string calldata symbol) external returns (address);
+    function syntheticTokensCount() external view returns (uint256);
 }
