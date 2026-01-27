@@ -32,6 +32,18 @@ describe("SyntheticToken", function () {
   });
 
   describe("Minting", function () {
+    it("reverts mint to zero address", async function () {
+      await expect(
+        token.mint(ethers.constants.AddressZero, 100)
+      ).to.be.reverted;
+    });
+
+    it("reverts mint with zero amount", async function () {
+      await expect(
+        token.mint(user.address, 0)
+      ).to.be.reverted;
+    });
+
     it("owner can mint tokens", async function () {
       await token.mint(user.address, AMOUNT);
 
@@ -54,6 +66,20 @@ describe("SyntheticToken", function () {
   describe("Burning", function () {
     beforeEach(async function () {
       await token.mint(user.address, AMOUNT);
+    });
+
+    it("reverts burn from zero address", async function () {
+      await expect(
+        token.burn(ethers.constants.AddressZero, 100)
+      ).to.be.reverted;
+    });
+
+    it("reverts burn with zero amount", async function () {
+      await token.mint(user.address, 100);
+
+      await expect(
+        token.burn(user.address, 0)
+      ).to.be.reverted;
     });
 
     it("owner can burn tokens", async function () {
