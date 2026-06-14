@@ -105,3 +105,20 @@ npx hardhat coverage
 Unit tests cover all contracts including edge cases and access control.
 Reentrancy attacks are simulated using dedicated malicious contracts.
 Integration test (`FullFlow.test.js`) verifies the complete user journey end-to-end.
+
+## Project Structure
+
+```
+contracts/
+├── SyntheticToken.sol
+├── SyntheticTokenFactory.sol
+├── Wrapper.sol
+├── Staking.sol
+├── interfaces/
+└── test-helpers/
+
+test/
+├── *.test.js
+└── integration/
+    └── FullFlow.test.js
+```
